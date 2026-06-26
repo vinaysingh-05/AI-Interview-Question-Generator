@@ -32,6 +32,7 @@ function cn(...classes: (string | boolean | undefined | null)[]) {
 
 type Page =
   | "landing" | "login" | "register"
+  | "features" | "about-public"
   | "dashboard" | "generate" | "history"
   | "saved" | "profile" | "settings" | "about";
 
@@ -354,9 +355,16 @@ function LandingNav({ onNavigate }: { onNavigate: (p: Page) => void }) {
         </button>
 
         <div className="hidden md:flex items-center gap-8">
-          {["Features", "Pricing", "About"].map((link) => (
-            <button key={link} className="text-sm text-slate-500 hover:text-slate-900 transition-colors font-medium">
-              {link}
+          {[
+            { label: "Features", page: "features" as Page },
+            { label: "About", page: "about-public" as Page },
+          ].map(({ label, page }) => (
+            <button
+              key={label}
+              onClick={() => onNavigate(page)}
+              className="text-sm text-slate-500 hover:text-slate-900 transition-colors font-medium"
+            >
+              {label}
             </button>
           ))}
         </div>
@@ -383,9 +391,16 @@ function LandingNav({ onNavigate }: { onNavigate: (p: Page) => void }) {
 
       {mobileOpen && (
         <div className="md:hidden bg-white border-t border-gray-100 px-6 py-4 space-y-1">
-          {["Features", "Pricing", "About"].map((link) => (
-            <button key={link} className="block w-full text-left text-sm text-slate-600 py-2.5 hover:text-slate-900">
-              {link}
+          {[
+            { label: "Features", page: "features" as Page },
+            { label: "About", page: "about-public" as Page },
+          ].map(({ label, page }) => (
+            <button
+              key={label}
+              onClick={() => { onNavigate(page); setMobileOpen(false); }}
+              className="block w-full text-left text-sm text-slate-600 py-2.5 hover:text-slate-900"
+            >
+              {label}
             </button>
           ))}
           <div className="pt-3 space-y-2">
@@ -772,6 +787,31 @@ function LandingPage({ onNavigate }: { onNavigate: (p: Page) => void }) {
       <WhyChooseUs />
       <TestimonialsSection />
       <FAQSection />
+      <LandingFooter onNavigate={onNavigate} />
+    </div>
+  );
+}
+
+function FeaturesLandingPage({ onNavigate }: { onNavigate: (p: Page) => void }) {
+  return (
+    <div className="bg-white">
+      <LandingNav onNavigate={onNavigate} />
+      <div className="pt-16">
+        <FeaturesSection />
+        <WhyChooseUs />
+      </div>
+      <LandingFooter onNavigate={onNavigate} />
+    </div>
+  );
+}
+
+function AboutLandingPage({ onNavigate }: { onNavigate: (p: Page) => void }) {
+  return (
+    <div className="bg-white min-h-screen">
+      <LandingNav onNavigate={onNavigate} />
+      <div className="pt-24 pb-16 max-w-3xl mx-auto px-6">
+        <AboutPage />
+      </div>
       <LandingFooter onNavigate={onNavigate} />
     </div>
   );
@@ -2536,6 +2576,24 @@ export default function App() {
       <>
         <Toaster position="top-right" richColors closeButton />
         <RegisterPage onNavigate={navigate} onLogin={handleLogin} />
+      </>
+    );
+  }
+
+  if (page === "features") {
+    return (
+      <>
+        <Toaster position="top-right" richColors closeButton />
+        <FeaturesLandingPage onNavigate={navigate} />
+      </>
+    );
+  }
+
+  if (page === "about-public") {
+    return (
+      <>
+        <Toaster position="top-right" richColors closeButton />
+        <AboutLandingPage onNavigate={navigate} />
       </>
     );
   }
